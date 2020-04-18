@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' show json;
 
 class ScaffoldExample extends StatelessWidget {
   @override
@@ -153,27 +156,107 @@ class BizCard extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
             "Nishimuro Roman",
             style: TextStyle(
-                fontSize: 30,
-                color: Colors.white,
-                fontFamily: 'AmaticSC'),
+                fontSize: 30, color: Colors.white, fontFamily: 'Lato-Bold'),
           ),
           Text(
             "Flutter junior developer",
-            style: TextStyle(fontSize: 23),
+            style: TextStyle(
+                fontSize: 35,
+                fontFamily: 'AmaticSC',
+                fontWeight: FontWeight.w800),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Icon(Icons.person_outline),
-              Text("Contact me @fuckwatermelons")
+              Text("Contact @fuckwatermelons", style: TextStyle(fontSize: 16))
             ],
           ),
         ],
       ),
     );
   }
+}
+
+class Wisdom extends StatefulWidget {
+  @override
+  _WisdomState createState() => _WisdomState();
+}
+
+class _WisdomState extends State<Wisdom> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(_currentQuote.quoteText),
+          FlatButton.icon(
+              onPressed: _updateQuote,
+              icon: Icon(Icons.add_comment),
+              label: Text(
+                "I NEED INSPIRATION",
+                style: TextStyle(fontSize: 25),
+              ))
+        ],
+      ),
+    ));
+  }
+
+  Quote _currentQuote = new Quote(
+      author: "No Idea",
+      quoteText: "Erm....",
+      image:
+          "https://upload.wikimedia.org/wikipedia/commons/f/f8/Question_mark_alternate.svg");
+
+  void _updateQuote() async {
+    _currentQuote = await _showQuote();
+    setState(() {
+
+    });
+    debugPrint(_currentQuote.toString());
+
+  }
+
+  Future<Quote> _showQuote() async {
+    final response =
+        await http.get('https://thesimpsonsquoteapi.glitch.me/quotes');
+    if (response.statusCode == 200) {
+      return Quote.fromJson(json.decode(response.body)[0]);
+    } else {
+      return Quote(
+          author: "No Idea",
+          quoteText: "Erm....",
+          image:
+              "https://upload.wikimedia.org/wikipedia/commons/f/f8/Question_mark_alternate.svg");
+    }
+  }
+}
+
+class Quote {
+  final String author;
+  final String quoteText;
+  final String image;
+
+  Quote({this.author, this.quoteText, this.image});
+
+  factory Quote.fromJson(Map<String, dynamic> json) {
+    return Quote(
+        author: json['character'],
+        quoteText: json['quote'],
+        image: json['image']);
+  }
+
+  @override
+  String toString() {
+    return 'Quote{author: $author, quoteText: $quoteText, image: $image}';
+  }
+
+
 }
