@@ -190,23 +190,71 @@ class Wisdom extends StatefulWidget {
 
 class _WisdomState extends State<Wisdom> {
   @override
+  void initState() {
+    _updateQuote();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color(0x93A8ACFF),
         body: Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(_currentQuote.quoteText),
-          FlatButton.icon(
-              onPressed: _updateQuote,
-              icon: Icon(Icons.add_comment),
-              label: Text(
-                "I NEED INSPIRATION",
-                style: TextStyle(fontSize: 25),
-              ))
-        ],
-      ),
-    ));
+          padding: EdgeInsets.all(10),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Color(0xFFFFFFFF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black, width: 2)),
+                  child: Text(
+                    _currentQuote.quoteText,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    width: 100,
+                    height: 150,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                      fit: BoxFit.contain,
+                      image: NetworkImage(
+                        _currentQuote.image,
+                      ),
+                    )),
+                  ),
+                  Text(
+                    _currentQuote.author,
+                    style: TextStyle(
+                        fontSize: 40,
+                        color: Colors.white,
+                        fontFamily: "AmaticSc",fontWeight: FontWeight.w800),
+                  )
+                ],
+              ),
+              OutlineButton.icon(
+                padding: EdgeInsets.all(10),
+                highlightedBorderColor: Colors.lightGreenAccent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                onPressed: _updateQuote,
+                icon: Icon(Icons.grade),
+                label: Text(
+                  "I NEED INSPIRATION",
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+
+
+            ],
+          ),
+        ));
   }
 
   Quote _currentQuote = new Quote(
@@ -217,11 +265,8 @@ class _WisdomState extends State<Wisdom> {
 
   void _updateQuote() async {
     _currentQuote = await _showQuote();
-    setState(() {
-
-    });
+    setState(() {});
     debugPrint(_currentQuote.toString());
-
   }
 
   Future<Quote> _showQuote() async {
@@ -257,6 +302,5 @@ class Quote {
   String toString() {
     return 'Quote{author: $author, quoteText: $quoteText, image: $image}';
   }
-
-
 }
+
